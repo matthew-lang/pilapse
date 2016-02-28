@@ -4,7 +4,7 @@ if [[ $# -eq 0 ]]; then
     echo "No arguments supplied"
     exit
 fi
-mkdir -p /home/pi/campi/timelapse/
+mkdir -p /home/pi/timelapse-photos/
 SLEEP_TIME=$1
 
 if [ "$SLEEP_TIME" -lt "2" ]; then
@@ -12,7 +12,6 @@ if [ "$SLEEP_TIME" -lt "2" ]; then
     exit
 fi
 echo "Starting Timelapse sleeping $SLEEP_TIME seconds between snapshots"
-mkdir -p /home/pi/timelapse-photos/
 sleep 10
 while [ 1 ]
 do
