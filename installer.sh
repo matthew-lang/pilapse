@@ -6,4 +6,7 @@ fi
 
 apt-get update -y
 apt-get upgrade -y
-apt-get install fswebcam vim git -y
+apt-get install fswebcam vim upstart git -y
+git clone https://github.com/matthew-lang/timelapse-pi.git
+chmod +x /home/pi/timelapse-pi/timelapse.sh
+cp /home/pi/timelapse-pi/timelapse.conf /etc/init/timelapse.conf
