@@ -1,0 +1,35 @@
+#!/bin/bash
+
+if [[ $# -eq 0 ]]; then
+    echo "No arguments supplied"
+    exit
+fi
+
+SLEEP_TIME=$1
+
+if [ "$SLEEP_TIME" -lt "2" ]; then
+    echo 'You must enter a number larger than 2 for the sleep time'
+    exit
+fi
+echo "Starting Timelapse sleeping $SLEEP_TIME seconds between snapshots"
+
+#mkdir if not exists
+mkdir -p /home/pi/timelapse-photos/
+
+#delete all 0b files
+find /home/pi/timelapse-photos/ -name "*.jpg" -size 0b -delete
+
+#zip last session up. This takes too long to do at startup.. possibly add to zip archive as we store the files and just do a rm on the directory before we start taking picturess again
+zip -j -m test.zip /home/pi/timelapse-photos/*
+
+sleep 1
+while [ 1 ]
+do
+    #DATE=`date +%Y%m%d%H%M%S`
+    #echo $DATE Taking Picture
+    NUM_FILES=$(printf "%06d" $(ls -1 /home/pi/timelapse-photos/ | wc -l))
+    #streamer -f jpeg -o /home/pi/timelapse-photos/${NUM_FILES}-photo.jpeg -s 1920x1080 &
+    fswebcam -r 1920x1080 --jpeg 100 -D 0 --no-overlay --no-timestamp --no-title --no-underlay --no-banner /home/pi/timelapse-photos/${NUM_FILES}-photo.jpg &
+    sleep $SLEEP_TIME
+done
+
