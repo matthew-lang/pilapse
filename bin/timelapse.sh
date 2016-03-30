@@ -1,8 +1,5 @@
 #!/bin/bash
 
-#Check if video exists
-[ -e /dev/video0 ] || exit
-
 echo "Staring PiLapse"
 
 if [[ $# -eq 0 ]]; then
@@ -24,41 +21,42 @@ INSTALL_LOC="${BASE_DIR}/bin"
 ZIP_DIR="${BASE_DIR}/timelapse-zips"
 
 function takePicture(){
+    [ -e /dev/video0 ] || exit
     echo "Taking Picture"
     NUM_FILES=$(printf "%06d" $(ls -1 ${OUTPUT_DIR} | wc -l))
     PIC_NAME=${OUTPUT_DIR}/${NUM_FILES}-photo.jpg
     #streamer -f jpeg -o /home/pi/timelapse-photos/${NUM_FILES}-photo.jpeg -s 1920x1080 &
-    fswebcam -r 1920x1080 --jpeg 100 -D 0 --quiet --no-overlay --no-timestamp --no-title --no-underlay --no-banner ${PIC_NAME}
+    fswebcam -r 1920x1080 --jpeg 100 -D 0 --quiet --no-overlay --no-timestamp --no-title --no-underlay --no-banner ${PIC_NAME} || echo "unable to take photo"
 
     #zip picture
     #[ -s $PIC_NAME ] && zip -j -g ${ZIP_NAME} ${PIC_NAME}
 }
-function zipLastSession(){
-    NUM_FILES=$(printf "%06d" $(ls -1 /home/pi/timelapse-photos/ | wc -l))
-    if (( $NUM_FILES > 0 )); then
+function copyLastSession(){
+    NUM_FILES=$(printf "%06d" $(ls -1 ${OUTPUT_DIR} | wc -l))
+    if (( $NUM_FILES = 0 )); then
         echo "No previous session data found."
         return 1
     fi
     find ${OUTPUT_DIR} -name "*.jpg" -size 0b -delete
     TEMP_DIR="${BASE_DIR}/.tmp"
     mv ${OUTPUT_DIR} ${TEMP_DIR}
-
+    zipTemp &
 }
-function createEmptyZip(){
-    NUM_ZIPS=$(printf "%06d" $(ls -1 $ZIP_DIR | wc -l))
-    ZIP_NAME=${ZIP_DIR}/zip-${NUM_ZIPS}.zip
-
-    #cp ${INSTALL_LOC}/empty.zip ${ZIP_NAME}
+function zipTemp(){
+   echo ${TEMP_DIR}
+   NUM_ZIPS=$(printf "%06d" $(ls -1 $ZIP_DIR | wc -l))
+   ZIP_NAME=${ZIP_DIR}/zip-${NUM_ZIPS}.zip
+   zip -j ${ZIP_NAME} ${TEMP_DIR}/*
 }
 
-#mkdir if not exists
+
+copyLastSession
 mkdir -p ${OUTPUT_DIR}
 mkdir -p ${ZIP_DIR}
-
-#delete all 0b files... have to move this
-find ${OUTPUT_DIR} -name "*.jpg" -size 0b -delete
-
 rm -rf $OUTPUT_DIR/*
+
+#Check if video exists
+[ -e /dev/video0 ] || exit
 
 sleep 1
 while [ 1 ]
