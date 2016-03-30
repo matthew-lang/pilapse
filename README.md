@@ -17,6 +17,7 @@ TODO
 
 
 ## TODO
-* Web interface to download zip files
+* Web interface to manage (download/erase) zip files
+* web interface to view most recently taken photo (and update automatically)
 * ability to build zip file on demand
 * fix plug/unplug of usb port to run/stop script
