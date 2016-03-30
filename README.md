@@ -14,3 +14,9 @@ And then you're good to go. The script will automatically stop/start when you pl
 
 ## Retrieving the files
 TODO
+
+
+## TODO
+* Web interface to download zip files
+* ability to build zip file on demand
+* fix plug/unplug of usb port to run/stop script
