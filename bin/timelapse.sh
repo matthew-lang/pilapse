@@ -27,13 +27,14 @@ function takePicture(){
     PIC_NAME=${OUTPUT_DIR}/${NUM_FILES}-photo.jpg
     #streamer -f jpeg -o /home/pi/timelapse-photos/${NUM_FILES}-photo.jpeg -s 1920x1080 &
     fswebcam -r 1920x1080 --jpeg 100 -D 0 --quiet --no-overlay --no-timestamp --no-title --no-underlay --no-banner ${PIC_NAME} || echo "unable to take photo"
-
+    echo "Saved."
     #zip picture
     #[ -s $PIC_NAME ] && zip -j -g ${ZIP_NAME} ${PIC_NAME}
 }
 function copyLastSession(){
     NUM_FILES=$(printf "%06d" $(ls -1 ${OUTPUT_DIR} | wc -l))
-    if (( $NUM_FILES = 0 )); then
+    echo "Found ${NUM_FILES} that need to be zipped from previous session"
+    if (( $NUM_FILES < 1 )); then
         echo "No previous session data found."
         return 1
     fi
@@ -47,6 +48,7 @@ function zipTemp(){
    NUM_ZIPS=$(printf "%06d" $(ls -1 $ZIP_DIR | wc -l))
    ZIP_NAME=${ZIP_DIR}/zip-${NUM_ZIPS}.zip
    zip -j ${ZIP_NAME} ${TEMP_DIR}/*
+   rm -rf ${TEMP_DIR}
 }
 
 
@@ -56,7 +58,7 @@ mkdir -p ${ZIP_DIR}
 rm -rf $OUTPUT_DIR/*
 
 #Check if video exists
-[ -e /dev/video0 ] || exit
+#[ -e /dev/video0 ] || exit
 
 sleep 1
 while [ 1 ]

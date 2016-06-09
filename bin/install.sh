@@ -8,14 +8,16 @@ apt-get update -y
 apt-get upgrade -y
 
 #install required programs
-apt-get install fswebcam upstart zip -y
+apt-get install fswebcam zip -y
 
 #timelapse.sh executable
 chmod +x /home/pi/pilapse/bin/timelapse.sh
 
-#copy upstart and udev rules files
-cp /home/pi/pilapse/bin/pilapse.conf /etc/init/pilapse.conf
+#copy udev rules file
 cp /home/pi/pilapse/bin/99-camera.rules /etc/udev/rules.d/99-camera.rules
 
+#setup startup service
+cp /home/pi/pilapse/bin/pilapse.sh /etc/init.d/pilapse
+update-rc.d pilapse defaults
 
 chown -R pi:pi /home/pi/pilapse

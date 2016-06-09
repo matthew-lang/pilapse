@@ -1,4 +1,6 @@
 #to listen to usb: udevadm monitor -p -u -s usb
 
-#run when usb added. The script should determine whether or not /dev/video0 exists
-ACTION=="add", SUBSYSTEMS=="usb", RUN+="service pilapse start"
+#run when usb added the script should determine whether or not /dev/video0 exists
+ACTION=="add", SUBSYSTEMS=="usb", RUN+="/home/pi/videoexists.sh"
+
+
